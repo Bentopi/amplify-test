@@ -1,11 +1,43 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useEffect, useRef, useState } from 'react'
 
-const inter = Inter({ subsets: ['latin'] })
+
+function useIsFirstRender(): boolean {
+  const isFirst = useRef(true)
+
+  if (isFirst.current) {
+    isFirst.current = false
+
+    return true
+  }
+
+  return isFirst.current
+}
+
 
 export default function Home() {
+  const isFirstRender = useIsFirstRender();
+
+  const [didFetchData, setDidFetchData] = useState(false)
+
+  const toggleDidFetchData = () => {
+    setDidFetchData(current => !current);
+  };
+
+
+  useEffect(() => {
+    if (isFirstRender) {
+      console.log("This is the first render")
+      return;
+    }
+
+    console.log("This is not the first render")
+  }, [isFirstRender]);
+
+
+
   return (
     <>
       <Head>
@@ -20,7 +52,9 @@ export default function Home() {
             This is very fast.
           </p>
         </div>
-
+        <div>{didFetchData ? "Fetched" : "We should fetch data"}</div>
+                <button onClick={toggleDidFetchData}>Fetch</button>
+         <div>Did we fetch the data?: {didFetchData ? "Yes" : "No"}</div>
         <div className={styles.center}>
           <Image
             className={styles.logo}
